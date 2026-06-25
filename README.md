@@ -1,36 +1,303 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚀 CubeSat Ground Station
 
-## Getting Started
+A modern full-stack CubeSat Ground Station software built with **Next.js**, **InfluxDB**, and a **Grafana-inspired user interface**.
 
-First, run the development server:
+This project is designed as a scalable ground segment capable of receiving, decoding, storing, and visualizing CubeSat telemetry in real time.
+
+---
+
+# Features
+
+* 📡 CubeSat telemetry visualization
+* 📊 Professional Grafana-inspired dashboard
+* 🛰️ Telemetry packet monitoring
+* 🗄️ InfluxDB time-series database
+* 🔌 RESTful API using Next.js
+* 📈 Real-time charts and telemetry panels
+* 🧪 Mock telemetry generator for development
+* 📝 CRUD API for telemetry testing
+* ⚡ Modern React / Next.js frontend
+
+---
+
+# Project Architecture
+
+```
+CubeSat
+    │
+    ▼
+Ground Station Receiver
+    │
+    ▼
+Packet Decoder
+    │
+    ▼
+Next.js API
+    │
+    ▼
+InfluxDB
+    │
+    ▼
+Frontend Dashboard
+```
+
+---
+
+# Technology Stack
+
+## Frontend
+
+* Next.js
+* React
+* TypeScript
+* Tailwind CSS
+* Grafana UI Components
+* Recharts
+
+## Backend
+
+* Next.js API Routes
+* TypeScript
+
+## Database
+
+* InfluxDB 2.x
+* Flux Query Language
+
+## Development
+
+* Docker
+* Node.js
+* Git
+
+---
+
+# Folder Structure
+
+```
+cubesat-groundstation/
+
+├── frontend/
+│   ├── src/
+│   │   ├── app/
+│   │   ├── components/
+│   │   ├── lib/
+│   │   └── ...
+│   ├── public/
+│   └── package.json
+│
+├── scripts/
+│   ├── seed-sensors.js
+│   └── ...
+│
+├── docker-compose.yml
+└── README.md
+```
+
+---
+
+# Database Structure
+
+Current bucket:
+
+```
+telemetry
+```
+
+Measurement:
+
+```
+tlm_samples
+```
+
+Example stored packet:
+
+```
+SYNC
+LEN
+PAYLOAD
+CRC
+```
+
+Payload:
+
+```
+[tlmId][DATA]
+```
+
+Example:
+
+```
+SYNC        AA55
+LEN         11
+PAYLOAD     2000112233445566778899
+CRC         1234
+```
+
+---
+
+# API Endpoints
+
+## Samples
+
+| Method | Endpoint           | Description                |
+| ------ | ------------------ | -------------------------- |
+| GET    | `/api/samples`     | Retrieve telemetry samples |
+| POST   | `/api/samples`     | Create telemetry sample    |
+| PUT    | `/api/samples/:id` | Update telemetry sample    |
+| DELETE | `/api/samples/:id` | Delete telemetry sample    |
+
+---
+
+# Dashboard
+
+Current dashboard includes:
+
+* Battery Voltage
+* CPU Temperature
+* Magnetometer
+* LED Status
+* Packet Table
+* Telemetry Charts
+* CRUD Test Panel
+
+---
+
+# Getting Started
+
+## Clone the repository
+
+```bash
+git clone <repository-url>
+```
+
+```
+cd cubesat-groundstation
+```
+
+---
+
+## Start InfluxDB
+
+```bash
+docker compose up -d
+```
+
+---
+
+## Install Frontend
+
+```bash
+cd frontend
+
+npm install
+```
+
+---
+
+## Configure Environment Variables
+
+Create:
+
+```
+frontend/.env.local
+```
+
+Example:
+
+```env
+INFLUX_URL=http://localhost:8086
+INFLUX_TOKEN=YOUR_TOKEN
+INFLUX_ORG=cubesat
+INFLUX_BUCKET=telemetry
+```
+
+---
+
+## Seed Mock Telemetry
+
+```bash
+node scripts/seed-sensors.js
+```
+
+---
+
+## Start Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+# Development Workflow
 
-To learn more about Next.js, take a look at the following resources:
+```
+Mock Telemetry
+        │
+        ▼
+InfluxDB
+        │
+        ▼
+Next.js API
+        │
+        ▼
+Dashboard
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# Future Roadmap
 
-## Deploy on Vercel
+## Telemetry
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+* Real telemetry packets
+* CRC validation
+* Packet decoding
+* Binary payload parser
+* Telecommand support
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Dashboard
+
+* Orbit visualization
+* Ground track
+* Satellite status
+* Pass prediction
+* Command uplink
+* Alarm system
+* Live telemetry streaming
+
+## Backend
+
+* Packet decoder service
+* WebSocket telemetry
+* Authentication
+* Mission database
+* Multi-satellite support
+
+---
+
+# Development Status
+
+| Module                     | Status         |
+| -------------------------- | -------------- |
+| Frontend                   | 🟢 In Progress |
+| Backend API                | 🟢 In Progress |
+| Database                   | 🟢 Working     |
+| Mock Telemetry             | 🟢 Working     |
+| Dashboard                  | 🟢 In Progress |
+| Packet Decoder             | 🟡 Planned     |
+| Ground Station Integration | 🟡 Planned     |
+| Satellite Integration      | 🔵 Future      |
+
+---
+
+# License
+
+This project is intended for educational and research purposes in CubeSat ground segment development.
