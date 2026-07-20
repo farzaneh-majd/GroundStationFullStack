@@ -1,6 +1,8 @@
-export type HealthState = "normal" | "warning" | "error";
+import type { HealthState, SatelliteTimeSeriesPoint, Vector3 } from "@/types/satellite";
 
-export const healthColor: Record<HealthState, string> = {
+export type { HealthState } from "@/types/satellite";
+
+export const healthColor: Record<HealthState, "green" | "orange" | "red"> = {
   normal: "green",
   warning: "orange",
   error: "red",
@@ -22,7 +24,7 @@ export const sensorHealth = {
   gps: "normal",
 } satisfies Record<string, HealthState>;
 
-export const timeSeriesData = [
+export const timeSeriesData: SatelliteTimeSeriesPoint[] = [
   { time: "10:00", solarVoltage: 4.8, temp1: 22.4, temp2: 23.1, humidity: 44 },
   { time: "10:05", solarVoltage: 5.1, temp1: 22.8, temp2: 23.5, humidity: 45 },
   { time: "10:10", solarVoltage: 5.4, temp1: 23.2, temp2: 24.0, humidity: 47 },
@@ -30,7 +32,7 @@ export const timeSeriesData = [
   { time: "10:20", solarVoltage: 4.9, temp1: 23.3, temp2: 24.8, humidity: 49 },
 ];
 
-export const imuData = {
+export const imuData: { gyroscope: Vector3; magnetometer: Vector3 } = {
   gyroscope: {
     x: 0.12,
     y: -0.08,

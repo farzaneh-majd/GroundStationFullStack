@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
-import { buildSample } from "@/lib/packet";
-import { deleteSampleById, isSafeId, writeSample } from "@/lib/influx";
+import { buildSample } from "@/utils/packet";
+import { isSafeId } from "@/server/influx/client";
+import {
+  deleteSampleById,
+  writeSample,
+} from "@/server/influx/samplesRepository";
 
 export const dynamic = "force-dynamic";
 
@@ -16,11 +20,9 @@ export async function PUT(
     }
 
     const body = await request.json();
-
-    await deleteSampleById(recordId);
-
     const updatedSample = buildSample(body, recordId);
 
+    await deleteSampleById(recordId);
     await writeSample(updatedSample);
 
     return NextResponse.json(updatedSample);
@@ -28,8 +30,8 @@ export async function PUT(
     console.error(error);
 
     return NextResponse.json(
-      { error: "Failed to update sample" },
-      { status: 500 },
+      { error: error instanceof Error ? error.message : "Failed to update sample" },
+      { status: 400 },
     );
   }
 }
@@ -47,10 +49,7 @@ export async function DELETE(
 
     await deleteSampleById(recordId);
 
-    return NextResponse.json({
-      deleted: true,
-      recordId,
-    });
+    return NextResponse.json({ deleted: true, recordId });
   } catch (error) {
     console.error(error);
 

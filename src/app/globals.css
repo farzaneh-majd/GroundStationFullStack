@@ -2,13 +2,45 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  color-scheme: dark;
+  --gs-bg: #111217;
+  --gs-surface: #181b24;
+  --gs-surface-2: #111217;
+  --gs-border: #2f3240;
+  --gs-text: #d8d9da;
+  --gs-muted: #9fa7b3;
+  --gs-blue: #3274d9;
+  --gs-green: #73bf69;
+  --gs-yellow: #f2cc0c;
+  --gs-red: #f2495c;
+}
+
 html,
 body {
   margin: 0;
-  background: #111217;
-  color: #d8d9da;
+  min-height: 100%;
+  background: var(--gs-bg);
+  color: var(--gs-text);
 }
 
 * {
   box-sizing: border-box;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.gs-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.gs-scrollbar::-webkit-scrollbar-thumb {
+  background: #3a3f4b;
+  border-radius: 999px;
 }
