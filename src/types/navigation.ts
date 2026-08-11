@@ -1,4 +1,4 @@
-export type GroundStationTab = "raw" | "mock" | "satellite" | "crud";
+export type GroundStationTab = "raw" | "telemetry" | "satellite" | "crud";
 
 export type GroundStationTabConfig = {
   id: GroundStationTab;

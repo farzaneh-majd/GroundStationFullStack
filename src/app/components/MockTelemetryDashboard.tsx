@@ -11,6 +11,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { getMockSamples } from "@/data/data";
 
 type Sample = {
   recordId: string;
@@ -180,13 +181,7 @@ export default function MockTelemetryDashboard() {
   const [lastUpdate, setLastUpdate] = useState<string>("");
 
   async function loadSamples() {
-    const res = await fetch("/api/samples", {
-      cache: "no-store",
-    });
-
-    const data = await res.json();
-
-    setSamples(data);
+    setSamples(getMockSamples());
     setLastUpdate(new Date().toLocaleTimeString());
     setLoading(false);
   }
@@ -234,7 +229,7 @@ export default function MockTelemetryDashboard() {
         <div>
           <h2 className="text-2xl font-semibold">Mock Telemetry Dashboard</h2>
           <p className="text-sm text-[#9fa7b3]">
-            Data source: InfluxDB / Measurement: tlm_samples
+            Data source: Local mock data catalog
           </p>
         </div>
 

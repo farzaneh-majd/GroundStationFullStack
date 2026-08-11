@@ -14,7 +14,7 @@ This project is designed as a scalable ground segment capable of receiving, deco
 * 🗄️ InfluxDB time-series database
 * 🔌 RESTful API using Next.js
 * 📈 Real-time charts and telemetry panels
-* 🧪 Mock telemetry generator for development
+* 🧪 Built-in month-long telemetry data generator for offline development
 * 📝 CRUD API for telemetry testing
 * ⚡ Modern React / Next.js frontend
 
@@ -214,7 +214,7 @@ INFLUX_BUCKET=telemetry
 
 ---
 
-## Seed Mock Telemetry
+## Seed Telemetry Data (InfluxDB)
 
 ```bash
 node scripts/seed-sensors.js
@@ -239,7 +239,7 @@ http://localhost:3000
 # Development Workflow
 
 ```
-Mock Telemetry
+Generated Telemetry Data
         │
         ▼
 InfluxDB
@@ -290,7 +290,7 @@ Dashboard
 | Frontend                   | 🟢 In Progress |
 | Backend API                | 🟢 In Progress |
 | Database                   | 🟢 Working     |
-| Mock Telemetry             | 🟢 Working     |
+| Telemetry Data Generator   | 🟢 Working     |
 | Dashboard                  | 🟢 In Progress |
 | Packet Decoder             | 🟡 Planned     |
 | Ground Station Integration | 🟡 Planned     |

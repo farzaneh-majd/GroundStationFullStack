@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Badge, Button } from "@grafana/ui";
+import DashboardHeader from "@/components/layout/DashboardHeader";
 import CodeBlock from "@/components/ui/CodeBlock";
 import EmptyState from "@/components/ui/EmptyState";
 import LoadingState from "@/components/ui/LoadingState";
@@ -53,23 +53,17 @@ export default function RawTelemetryDashboard() {
 
   return (
     <div className="space-y-6 p-6">
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-        <div>
-          <h2 className="text-2xl font-semibold">Decoded Raw Telemetry</h2>
-          <p className="mt-1 text-sm text-[#9fa7b3]">
-            Friend software sends <span className="font-mono">satellite_id + tlm_id + payload</span>. The backend decodes the payload dynamically from the telemetry map.
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <Badge text="RAW PACKET API" color="green" />
-          <span className="text-xs text-[#9fa7b3]">Last update: {lastUpdate || "--"}</span>
-          <Button size="sm" onClick={loadPackets}>Refresh</Button>
-        </div>
-      </div>
+      <DashboardHeader
+        title="Decoded Raw Telemetry"
+        description={"Friend software sends satellite_id + tlm_id + payload. The backend decodes the payload dynamically from the telemetry map."}
+        badgeText="RAW PACKET API"
+        badgeColor="green"
+        lastUpdate={lastUpdate}
+        onRefresh={loadPackets}
+      />
 
       {error && (
-        <div className="rounded border border-[#F2495C] bg-[#2a1217] p-3 text-sm text-[#ffb3bd]">
+        <div className="rounded-[var(--gs-radius)] border border-[var(--gs-red)] bg-[#2a1217] p-3 text-sm text-[#ffb3bd]">
           {error}
         </div>
       )}
@@ -103,14 +97,16 @@ export default function RawTelemetryDashboard() {
 
       <TelemetryMapPanel />
 
-      <Panel title="Raw Packet Monitor" subtitle="GET /api/telemetry/packets">
+      <Panel title="Raw Packet Monitor" subtitle="GET /api/telemetry/packets" noPadding>
         {packets.length > 0 ? (
           <RawPacketTable packets={packets} onSelect={setSelectedPacket} onDelete={handleDelete} />
         ) : (
-          <EmptyState
-            title="No raw packets stored yet"
-            message="Use the writer above to POST an LED or IMU packet, or ask your friend to POST to /api/telemetry/packets."
-          />
+          <div className="p-4">
+            <EmptyState
+              title="No raw packets stored yet"
+              message="Use the writer above to POST an LED or IMU packet, or ask your friend to POST to /api/telemetry/packets."
+            />
+          </div>
         )}
       </Panel>
     </div>

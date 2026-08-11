@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Badge, Button } from "@grafana/ui";
+import { Button } from "@grafana/ui";
+import DashboardHeader from "@/components/layout/DashboardHeader";
 import EmptyState from "@/components/ui/EmptyState";
 import LoadingState from "@/components/ui/LoadingState";
 import Panel from "@/components/ui/Panel";
@@ -75,23 +76,17 @@ export default function SampleCrudPanel() {
 
   return (
     <div className="space-y-6 p-6">
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-        <div>
-          <h2 className="text-2xl font-semibold">API / CRUD Test</h2>
-          <p className="mt-1 text-sm text-[#9fa7b3]">
-            Manual CRUD panel for <span className="font-mono">/api/samples</span> and the <span className="font-mono">tlm_samples</span> measurement.
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <Badge text="CRUD" color="orange" />
-          <span className="text-xs text-[#9fa7b3]">Last update: {lastUpdate || "--"}</span>
-          <Button size="sm" onClick={loadSamples}>Refresh</Button>
-        </div>
-      </div>
+      <DashboardHeader
+        title="API / CRUD Test"
+        description="Manual CRUD panel for /api/samples and the tlm_samples measurement."
+        badgeText="CRUD"
+        badgeColor="orange"
+        lastUpdate={lastUpdate}
+        onRefresh={loadSamples}
+      />
 
       {(error || formError) && (
-        <div className="rounded border border-[#F2495C] bg-[#2a1217] p-3 text-sm text-[#ffb3bd]">
+        <div className="rounded-[var(--gs-radius)] border border-[var(--gs-red)] bg-[#2a1217] p-3 text-sm text-[#ffb3bd]">
           {error || formError}
         </div>
       )}
@@ -130,36 +125,38 @@ export default function SampleCrudPanel() {
             <EmptyState title="No samples" message="Create a sample from the form or seed the InfluxDB database." />
           ) : (
             <div className="gs-scrollbar overflow-x-auto">
-              <table className="w-full text-left text-sm">
-                <thead className="text-[#9fa7b3]">
+              <table className="gs-table">
+                <thead>
                   <tr>
-                    <th className="p-2">Time</th>
-                    <th className="p-2">Type</th>
-                    <th className="p-2">tlmId</th>
-                    <th className="p-2">Value</th>
-                    <th className="p-2">X/Y/Z</th>
-                    <th className="p-2">CRC</th>
-                    <th className="p-2">Actions</th>
+                    <th>Time</th>
+                    <th>Type</th>
+                    <th>tlmId</th>
+                    <th>Value</th>
+                    <th>X/Y/Z</th>
+                    <th>CRC</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {samples.map((sample) => (
-                    <tr key={sample.recordId} className="border-t border-[#2f3240]">
-                      <td className="p-2 text-[#9fa7b3]">{formatTime(sample.time)}</td>
-                      <td className="p-2">{sample.sampleType}</td>
-                      <td className="p-2 font-mono">{sample.tlmId}</td>
-                      <td className="p-2">{sample.value ?? "--"} {sample.unit}</td>
-                      <td className="p-2">{sample.x ?? "--"} / {sample.y ?? "--"} / {sample.z ?? "--"}</td>
-                      <td className="p-2 font-mono">{sample.crc}</td>
-                      <td className="flex gap-2 p-2">
-                        <Button size="sm" variant="secondary" onClick={() => loadForEdit(sample)}>Edit</Button>
-                        <button
-                          type="button"
-                          onClick={() => void deleteSample(sample.recordId)}
-                          className="rounded border border-[#F2495C] px-3 py-1 text-xs text-[#ff9ba8] hover:bg-[#2a1217]"
-                        >
-                          Delete
-                        </button>
+                    <tr key={sample.recordId}>
+                      <td className="text-[var(--gs-muted)]">{formatTime(sample.time)}</td>
+                      <td>{sample.sampleType}</td>
+                      <td className="font-mono">{sample.tlmId}</td>
+                      <td>{sample.value ?? "--"} {sample.unit}</td>
+                      <td>{sample.x ?? "--"} / {sample.y ?? "--"} / {sample.z ?? "--"}</td>
+                      <td className="font-mono">{sample.crc}</td>
+                      <td>
+                        <div className="flex gap-2">
+                          <Button size="sm" variant="secondary" onClick={() => loadForEdit(sample)}>Edit</Button>
+                          <button
+                            type="button"
+                            onClick={() => void deleteSample(sample.recordId)}
+                            className="rounded-[var(--gs-radius)] border border-[var(--gs-red)] px-3 py-1 text-xs text-[#ff9ba8] transition-colors hover:bg-[#2a1217]"
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}

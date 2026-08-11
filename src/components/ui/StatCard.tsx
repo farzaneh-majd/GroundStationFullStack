@@ -1,5 +1,14 @@
 import { classNames } from "@/utils/format";
 
+type StatStatus = "nominal" | "warning" | "critical" | "muted";
+
+const statusColor: Record<StatStatus, string> = {
+  nominal: "var(--gs-green)",
+  warning: "var(--gs-yellow)",
+  critical: "var(--gs-red)",
+  muted: "var(--gs-muted)",
+};
+
 export default function StatCard({
   title,
   value,
@@ -11,28 +20,25 @@ export default function StatCard({
   value: string;
   unit?: string;
   subtitle?: string;
-  status?: "nominal" | "warning" | "critical" | "muted";
+  status?: StatStatus;
 }) {
-  const dotClass = {
-    nominal: "text-[#73BF69]",
-    warning: "text-[#F2CC0C]",
-    critical: "text-[#F2495C]",
-    muted: "text-[#9fa7b3]",
-  }[status];
+  const color = statusColor[status];
 
   return (
-    <div className="rounded border border-[#2f3240] bg-[#111217] p-4">
-      <div className="mb-2 flex items-center justify-between gap-3">
-        <span className="text-xs text-[#9fa7b3]">{title}</span>
-        <span className={classNames("text-xs", dotClass)}>●</span>
+    <div
+      className="relative overflow-hidden rounded-[var(--gs-radius)] border border-[var(--gs-border)] bg-[var(--gs-surface)] p-4 shadow-[var(--gs-shadow)]"
+      style={{ borderLeft: `3px solid ${color}` }}
+    >
+      <div className="text-xs text-[var(--gs-muted)]">{title}</div>
+
+      <div className="mt-2 flex items-end gap-2">
+        <span className="text-[28px] font-semibold leading-none" style={{ color }}>
+          {value}
+        </span>
+        {unit && <span className="pb-0.5 text-sm text-[var(--gs-muted)]">{unit}</span>}
       </div>
 
-      <div className="flex items-end gap-2">
-        <span className="text-3xl font-semibold text-[#d8d9da]">{value}</span>
-        {unit && <span className="pb-1 text-sm text-[#9fa7b3]">{unit}</span>}
-      </div>
-
-      {subtitle && <div className="mt-2 text-xs text-[#9fa7b3]">{subtitle}</div>}
+      {subtitle && <div className={classNames("mt-2 text-xs text-[var(--gs-muted)]")}>{subtitle}</div>}
     </div>
   );
 }

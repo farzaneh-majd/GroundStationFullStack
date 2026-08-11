@@ -1,6 +1,12 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import {
+  createSample as createSampleRecord,
+  deleteSample as deleteSampleRecord,
+  listSamples,
+  updateSample as updateSampleRecord,
+} from "@/data/data";
 import type { SampleInput, StoredSample } from "@/types/sample";
 import { usePolling } from "./usePolling";
 
@@ -9,13 +15,6 @@ type LoadOptions = {
   limit?: number;
   pollingMs?: number;
 };
-
-function makeQuery(options?: LoadOptions) {
-  const params = new URLSearchParams();
-  params.set("limit", String(options?.limit ?? 100));
-  if (options?.sampleType) params.set("sampleType", options.sampleType);
-  return params.toString();
-}
 
 export function useSamples(options?: LoadOptions) {
   const sampleType = options?.sampleType;
@@ -30,17 +29,8 @@ export function useSamples(options?: LoadOptions) {
   const loadSamples = useCallback(async () => {
     try {
       setError(null);
-      const response = await fetch(`/api/samples?${makeQuery({ sampleType, limit })}`, {
-        cache: "no-store",
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data?.error ?? "Failed to load samples");
-      }
-
-      setSamples(Array.isArray(data) ? data : []);
+      const nextSamples = listSamples({ sampleType, limit });
+      setSamples(nextSamples);
       setLastUpdate(new Date().toLocaleTimeString());
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unknown sample loading error");
@@ -50,52 +40,27 @@ export function useSamples(options?: LoadOptions) {
   }, [sampleType, limit]);
 
   const createSample = useCallback(async (sample: SampleInput) => {
-    const response = await fetch("/api/samples", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(sample),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data?.error ?? "Failed to create sample");
-    }
-
-    await loadSamples();
-    return data as StoredSample;
-  }, [loadSamples]);
+    const created = createSampleRecord(sample);
+    const nextSamples = listSamples({ sampleType, limit });
+    setSamples(nextSamples);
+    setLastUpdate(new Date().toLocaleTimeString());
+    return created;
+  }, [sampleType, limit]);
 
   const updateSample = useCallback(async (recordId: string, sample: SampleInput) => {
-    const response = await fetch(`/api/samples/${recordId}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(sample),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data?.error ?? "Failed to update sample");
-    }
-
-    await loadSamples();
-    return data as StoredSample;
-  }, [loadSamples]);
+    const updated = updateSampleRecord(recordId, sample);
+    const nextSamples = listSamples({ sampleType, limit });
+    setSamples(nextSamples);
+    setLastUpdate(new Date().toLocaleTimeString());
+    return updated;
+  }, [sampleType, limit]);
 
   const deleteSample = useCallback(async (recordId: string) => {
-    const response = await fetch(`/api/samples/${recordId}`, {
-      method: "DELETE",
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data?.error ?? "Failed to delete sample");
-    }
-
-    await loadSamples();
-  }, [loadSamples]);
+    deleteSampleRecord(recordId);
+    const nextSamples = listSamples({ sampleType, limit });
+    setSamples(nextSamples);
+    setLastUpdate(new Date().toLocaleTimeString());
+  }, [sampleType, limit]);
 
   usePolling(loadSamples, pollingMs);
 

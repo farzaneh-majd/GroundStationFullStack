@@ -13,14 +13,14 @@ export default function TextField({
 }) {
   return (
     <label className="block">
-      <div className="mb-1 text-xs text-[#9fa7b3]">{label}</div>
+      <div className="mb-1 text-xs text-[var(--gs-muted)]">{label}</div>
       <input
         value={value}
         placeholder={placeholder}
         onChange={(event) => onChange(event.target.value)}
-        className="w-full rounded border border-[#2f3240] bg-[#111217] px-3 py-2 text-[#d8d9da] outline-none transition placeholder:text-[#5f6673] focus:border-[#73BF69]"
+        className="w-full rounded-[var(--gs-radius)] border border-[var(--gs-border)] bg-[var(--gs-surface-2)] px-3 py-2 text-[var(--gs-text)] outline-none transition-colors placeholder:text-[var(--gs-faint)] focus:border-[var(--gs-blue-light)]"
       />
-      {helper && <div className="mt-1 text-xs text-[#6f7785]">{helper}</div>}
+      {helper && <div className="mt-1 text-xs text-[var(--gs-faint)]">{helper}</div>}
     </label>
   );
 }
