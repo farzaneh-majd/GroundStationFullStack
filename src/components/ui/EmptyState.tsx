@@ -6,9 +6,9 @@ export default function EmptyState({
   message: string;
 }) {
   return (
-    <div className="rounded border border-dashed border-[#2f3240] bg-[#111217] p-8 text-center">
-      <div className="text-sm font-semibold text-[#d8d9da]">{title}</div>
-      <div className="mt-2 text-sm text-[#9fa7b3]">{message}</div>
+    <div className="rounded-[var(--gs-radius)] border border-dashed border-[var(--gs-border)] bg-[var(--gs-surface-2)] p-8 text-center">
+      <div className="text-sm font-semibold text-[var(--gs-text)]">{title}</div>
+      <div className="mt-2 text-sm text-[var(--gs-muted)]">{message}</div>
     </div>
   );
 }

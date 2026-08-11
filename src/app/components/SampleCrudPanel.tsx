@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Badge, Button, Spinner } from "@grafana/ui";
+import { createMockSample, deleteMockSample, getMockSamples, updateMockSample } from "@/data/data";
 
 type Sample = {
   recordId: string;
@@ -37,64 +38,42 @@ export default function SampleCrudPanel() {
 
   async function loadSamples() {
     setLoading(true);
-
-    const res = await fetch("/api/samples", {
-      cache: "no-store",
-    });
-
-    const data = await res.json();
-
-    setSamples(data);
+    setSamples(getMockSamples());
     setLoading(false);
   }
 
   async function createSample() {
-    await fetch("/api/samples", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        sampleType: form.sampleType,
-        tlmId: form.tlmId,
-        dataHex: form.dataHex,
-        value: Number(form.value),
-        x: Number(form.x),
-        y: Number(form.y),
-        z: Number(form.z),
-        unit: form.unit,
-      }),
+    createMockSample({
+      sampleType: form.sampleType,
+      tlmId: form.tlmId,
+      dataHex: form.dataHex,
+      value: Number(form.value),
+      x: Number(form.x),
+      y: Number(form.y),
+      z: Number(form.z),
+      unit: form.unit,
     });
 
     await loadSamples();
   }
 
   async function updateSample(sample: Sample) {
-    await fetch(`/api/samples/${sample.recordId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        sampleType: sample.sampleType,
-        tlmId: sample.tlmId,
-        dataHex: sample.dataHex,
-        value: Number(sample.value ?? 0) + 1,
-        x: Number(sample.x ?? 0) + 0.1,
-        y: sample.y ?? 0,
-        z: sample.z ?? 0,
-        unit: sample.unit || "",
-      }),
+    updateMockSample(sample.recordId, {
+      sampleType: sample.sampleType,
+      tlmId: sample.tlmId,
+      dataHex: sample.dataHex,
+      value: Number(sample.value ?? 0) + 1,
+      x: Number(sample.x ?? 0) + 0.1,
+      y: sample.y ?? 0,
+      z: sample.z ?? 0,
+      unit: sample.unit || "",
     });
 
     await loadSamples();
   }
 
   async function deleteSample(recordId: string) {
-    await fetch(`/api/samples/${recordId}`, {
-      method: "DELETE",
-    });
-
+    deleteMockSample(recordId);
     await loadSamples();
   }
 
@@ -113,7 +92,7 @@ export default function SampleCrudPanel() {
         </div>
 
         <div className="flex items-center gap-3">
-          <Badge text="INFLUXDB" color="blue" />
+          <Badge text="LOCAL MOCK DATA" color="green" />
           <Button size="sm" onClick={loadSamples}>
             Refresh
           </Button>

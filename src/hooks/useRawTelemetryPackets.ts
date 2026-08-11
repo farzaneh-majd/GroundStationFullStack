@@ -1,6 +1,12 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import {
+  createPacket as createPacketRecord,
+  deletePacket as deletePacketRecord,
+  listPackets,
+  updatePacket as updatePacketRecord,
+} from "@/data/data";
 import type { IncomingRawTelemetryPacket, StoredRawTelemetryPacket } from "@/types/telemetry";
 import { usePolling } from "./usePolling";
 
@@ -9,14 +15,6 @@ type LoadOptions = {
   satellite_id?: string;
   tlm_id?: string;
 };
-
-function makeQuery(options?: LoadOptions) {
-  const params = new URLSearchParams();
-  params.set("limit", String(options?.limit ?? 200));
-  if (options?.satellite_id) params.set("satellite_id", options.satellite_id);
-  if (options?.tlm_id) params.set("tlm_id", options.tlm_id);
-  return params.toString();
-}
 
 export function useRawTelemetryPackets(options?: LoadOptions & { pollingMs?: number }) {
   const limit = options?.limit ?? 200;
@@ -32,17 +30,8 @@ export function useRawTelemetryPackets(options?: LoadOptions & { pollingMs?: num
   const loadPackets = useCallback(async () => {
     try {
       setError(null);
-      const response = await fetch(`/api/telemetry/packets?${makeQuery({ limit, satellite_id: satelliteId, tlm_id: tlmId })}`, {
-        cache: "no-store",
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data?.error ?? "Failed to load packets");
-      }
-
-      setPackets(Array.isArray(data) ? data : []);
+      const nextPackets = listPackets({ limit, satelliteId, tlmId });
+      setPackets(nextPackets);
       setLastUpdate(new Date().toLocaleTimeString());
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unknown packet loading error");
@@ -52,52 +41,27 @@ export function useRawTelemetryPackets(options?: LoadOptions & { pollingMs?: num
   }, [limit, satelliteId, tlmId]);
 
   const createPacket = useCallback(async (packet: IncomingRawTelemetryPacket) => {
-    const response = await fetch("/api/telemetry/packets", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(packet),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data?.error ?? "Failed to create packet");
-    }
-
-    await loadPackets();
-    return data as StoredRawTelemetryPacket;
-  }, [loadPackets]);
+    const created = createPacketRecord(packet);
+    const nextPackets = listPackets({ limit, satelliteId, tlmId });
+    setPackets(nextPackets);
+    setLastUpdate(new Date().toLocaleTimeString());
+    return created;
+  }, [limit, satelliteId, tlmId]);
 
   const updatePacket = useCallback(async (recordId: string, packet: IncomingRawTelemetryPacket) => {
-    const response = await fetch(`/api/telemetry/packets/${recordId}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(packet),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data?.error ?? "Failed to update packet");
-    }
-
-    await loadPackets();
-    return data as StoredRawTelemetryPacket;
-  }, [loadPackets]);
+    const updated = updatePacketRecord(recordId, packet);
+    const nextPackets = listPackets({ limit, satelliteId, tlmId });
+    setPackets(nextPackets);
+    setLastUpdate(new Date().toLocaleTimeString());
+    return updated;
+  }, [limit, satelliteId, tlmId]);
 
   const deletePacket = useCallback(async (recordId: string) => {
-    const response = await fetch(`/api/telemetry/packets/${recordId}`, {
-      method: "DELETE",
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data?.error ?? "Failed to delete packet");
-    }
-
-    await loadPackets();
-  }, [loadPackets]);
+    deletePacketRecord(recordId);
+    const nextPackets = listPackets({ limit, satelliteId, tlmId });
+    setPackets(nextPackets);
+    setLastUpdate(new Date().toLocaleTimeString());
+  }, [limit, satelliteId, tlmId]);
 
   usePolling(loadPackets, pollingMs);
 
