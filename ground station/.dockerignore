@@ -1,0 +1,16 @@
+.git
+.gitignore
+.next/*
+!.next/standalone
+!.next/standalone/**
+!.next/static
+!.next/static/**
+node_modules
+out
+build
+coverage
+.env
+.env.*
+!.env.example
+*.log
+npm-debug.log*

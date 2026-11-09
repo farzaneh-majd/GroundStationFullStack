@@ -1,0 +1,21 @@
+services:
+  api:
+    image: gs-backend-runtime:local
+    build:
+      context: .
+      dockerfile: Dockerfile.local
+    working_dir: /app
+    volumes:
+      - .:/app
+    environment:
+      PATH: /opt/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+  sync:
+    image: gs-backend-runtime:local
+    build:
+      context: .
+      dockerfile: Dockerfile.local
+    working_dir: /app
+    volumes:
+      - .:/app
+    environment:
+      PATH: /opt/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
